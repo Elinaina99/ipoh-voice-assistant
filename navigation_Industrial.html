@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Ipoh IndustrialND Heritage Voice Tour</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+:root{font-family:Segoe UI,Arial,sans-serif;color:#261b3b;background:#faf4fb}*{box-sizing:border-box}body{margin:0}.app{max-width:970px;margin:auto;padding:12px}.panel{border:1px solid #e6d3e9;background:white;border-radius:15px;padding:16px;margin:0 0 12px}h1{font-size:21px;margin:0 0 7px}h2{font-size:17px;margin:0 0 9px}p{line-height:1.45}.muted{color:#62526d;font-size:13px}.row{display:flex;flex-wrap:wrap;align-items:center;gap:8px}.buttons{margin:12px 0}.btn{border:1px solid #cfb5d7;border-radius:9px;color:#653780;background:white;padding:10px 12px;font-weight:650;cursor:pointer;font-size:14px}.btn.primary{background:#673782;color:white}.btn:focus-visible,.stop:focus-visible{outline:3px solid #9867c0;outline-offset:2px}.btn:disabled{opacity:.45;cursor:not-allowed}.hint{font-size:13px;background:#f7eafa;border-left:4px solid #9b63b3;padding:10px;border-radius:2px;margin:10px 0}.good{color:#216a49}.bad{color:#aa2727}.status{font-size:13px;min-height:20px}.count{font-size:13px;color:#59446a}.stops{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:8px;margin-top:10px}.stop{border:1px solid #e3cfe9;border-radius:10px;background:#fff;text-align:left;padding:10px;cursor:pointer;min-height:62px;color:inherit}.stop.active{border:2px solid #71418e;background:#f6eafa}.stop strong{display:block;font-size:14px}.stop small{display:block;color:#67556f;margin-top:4px}.big{font-size:22px;font-weight:750}.current{background:#fbf6fc;border-radius:10px;padding:13px}.leg{font-size:13px;color:#59496a}.map{height:360px;border:1px solid #e3d4e7;border-radius:10px}.sr-only{position:absolute;clip:rect(0,0,0,0);width:1px;height:1px;overflow:hidden}pre{white-space:pre-wrap;word-break:break-word;font-size:12px}summary{cursor:pointer} @media(max-width:500px){.app{padding:6px}.panel{padding:11px}.map{height:270px}}
+
+/* Compact layout for an ArcGIS Dashboard Embedded Content panel */
+html,body{min-height:0} .app{max-width:970px;margin:0 auto;padding:6px}
+.panel{padding:10px;margin:0 0 7px;border-radius:10px}
+h1{font-size:17px;line-height:1.25;margin:0 0 4px}
+h2{font-size:15px;line-height:1.3;margin:0 0 6px}
+p{margin:4px 0 7px;line-height:1.35}
+.muted,.hint,.status,.leg,.count{font-size:12px}
+.buttons{margin:7px 0;gap:6px}.btn{padding:8px 9px;font-size:12.5px;line-height:1.2;min-height:39px;border-radius:8px}
+.hint{padding:7px 8px;margin:7px 0 0;border-left-width:3px}
+.status{min-height:0;line-height:1.35}
+.current{padding:8px;border-radius:7px}.big{font-size:17px}
+.stop{min-height:43px;padding:7px;border-radius:7px}.stop strong{font-size:12.5px}.stop small{font-size:11.5px;margin-top:2px}
+.stops{grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:5px;margin-top:6px}
+#turnSteps{margin:7px 0 0;padding-left:22px;font-size:12.5px;line-height:1.4}#turnSteps li{margin:0 0 3px}
+.map{height:240px;border-radius:7px}
+@media(max-width:480px){
+ .app{padding:3px}.panel{padding:8px;margin-bottom:6px;border-radius:9px}
+ h1{font-size:16px}h2{font-size:14px}
+ .buttons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:5px;margin:7px 0}
+ .buttons .btn{width:100%;padding:7px 4px;font-size:12px;min-height:39px;white-space:normal}
+ .hint{font-size:11.5px}.map{height:190px}.stops{grid-template-columns:1fr 1fr;gap:5px}
+ .stop{padding:6px;min-height:44px}.stop strong{font-size:12px}
+}
+
+/* Industrial Perspective: light mint / teal dashboard */
+:root{color:#193b4d!important;background:#eafbfa!important}
+body{background:#eafbfa!important}
+.section,.panel{background:#f8ffff!important;border-color:#b7dede!important}
+button,.btn,.stop,select,input,.tile{border-color:#a7d2d2!important;color:#193b4d!important;background:#fff!important}
+button.primary,.btn.primary,.stop.active{background:#237b80!important;color:#fff!important;border-color:#237b80!important}
+button:hover,.btn:hover,.tile:hover,.stop:hover{background:#d8f1f0!important;color:#193b4d!important}
+button:focus-visible,select:focus-visible,input:focus-visible,.stop:focus-visible{outline:3px solid #237b80!important;outline-offset:2px}
+.note,.hint,.current{background:#eafbfa!important;border-color:#9ccfd0!important}
+.muted,.subtitle,.count,.status,.leg,.tile-hint{color:#426c70!important}
+
+</style></head><body><main class="app">
+<section class="panel"><h1>🔊 Ipoh Industrial Voice-Guided Tour</h1><p class="muted">Industrial Perspective · Follow the optimized heritage stop sequence with spoken left, right and straight-ahead guidance.</p>
+<div class="row buttons"><button class="btn primary" id="enable">🔊 Enable voice</button><button class="btn" id="start" disabled>▶ Start tour</button><button class="btn" id="previous" disabled>◀ Previous</button><button class="btn" id="next" disabled>Next stop ▶</button><button class="btn" id="repeat" disabled>↻ Repeat</button><button class="btn" id="stopSpeech">■ Stop audio</button></div>
+<div class="status" id="status" role="status" aria-live="polite">Loading the published heritage sequence…</div>
+<div class="hint">Directions follow bends in the published GA-TSP route. Check your surroundings and crossings before moving.</div>
+</section>
+<section class="panel"><h2>Current and next heritage stops</h2><div id="current" class="current" aria-live="polite">Loading…</div><p id="distanceNote" class="muted"></p><ol id="turnSteps" aria-label="Directions to next attraction"></ol></section>
+<section class="panel"><h2>Optimized visiting sequence <span class="count" id="summary"></span></h2><p class="muted">Tap a stop to hear its position in the optimized tour. Use “Next stop” to follow the tour in order.</p><div class="stops" id="stops"></div></section>
+<section class="panel"><h2>Published GA-TSP route map</h2><p class="muted">The violet lines show the published route. A highlighted section appears when the next two stops can be connected along the stored geometry.</p><div id="map" class="map" role="img" aria-label="Map of the published heritage route and ordered attraction stops"></div></section>
+<section class="panel"><details><summary><strong>Data and connection diagnostics</strong></summary><pre id="diagnostics"></pre></details></section>
+</main><script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+(()=>{'use strict';
+const BASE='https://services5.arcgis.com/2ZRAaoTSJbQ20ceg/arcgis/rest/services/GATSP_Optimized_Heritage_Tourism_Route_Industrial/FeatureServer';
+const el=id=>document.getElementById(id);const state={stops:[],paths:[],total:null,idx:0,map:null,markers:[],voice:false,graph:null,highlight:null,legs:new Map()};const messages=[];
+function debug(msg){messages.push(msg);el('diagnostics').textContent=messages.join('\n');console.log(msg)}
+function status(msg,error=false){el('status').textContent=msg;el('status').className='status '+(error?'bad':'good')}
+async function request(path,options={}){const u=new URL(path);Object.entries({...options,f:'json'}).forEach(([k,v])=>u.searchParams.set(k,String(v)));const controller=new AbortController();const timer=setTimeout(()=>controller.abort(),20000);try{const r=await fetch(u,{signal:controller.signal});if(!r.ok)throw Error('HTTP '+r.status);const j=await r.json();if(j.error)throw Error(j.error.message||'ArcGIS REST error');return j}finally{clearTimeout(timer)}}
+function getField(a,...names){for(const name of names){const k=Object.keys(a||{}).find(x=>x.toLowerCase()===name.toLowerCase());if(k&&a[k]!==null&&a[k]!==undefined)return a[k]}return null}
+function valid(v){return v!==null&&v!==''&&Number.isFinite(Number(v))?Number(v):null}
+async function features(layer){const root=BASE+'/'+layer;const meta=await request(root);debug('Layer '+layer+': '+meta.name+', type='+meta.geometryType);const idList=await request(root+'/query',{where:'1=1',returnIdsOnly:true});const ids=idList.objectIds||[];const all=[];for(let i=0;i<ids.length;i+=75){const b=await request(root+'/query',{objectIds:ids.slice(i,i+75).join(','),outFields:'*',outSR:4326,returnGeometry:true});all.push(...(b.features||[]))}debug('Layer '+layer+': retrieved '+all.length+' records');return all}
+function say(text){if(!state.voice)return;if(!('speechSynthesis' in window)){status('Text-to-speech is not supported by this browser.',true);return}window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='en-GB';u.rate=.88;window.speechSynthesis.speak(u)}
+function meters(v){return v<1000?Math.round(v)+' metres':(v/1000).toFixed(2)+' kilometres'}
+function legDistance(i){const stops=state.stops;if(i>=stops.length-1)return {value:null,source:'last stop'};const a=stops[i],b=stops[i+1];if(a.cumul!=null&&b.cumul!=null&&b.cumul>a.cumul)return {value:b.cumul-a.cumul,source:'difference in Cumul_Length'};if(b.attr!=null&&b.attr>0)return {value:b.attr,source:'next stop Attr_Length'};return {value:null,source:'no reliable leg distance in stored fields'}}
+// Build a topological graph from the actual polyline parts. We do not create edges across gaps.
+function hav(a,b){const R=6371008.8,rad=Math.PI/180,p=a[1]*rad,q=b[1]*rad,dp=(b[1]-a[1])*rad,dl=(b[0]-a[0])*rad;const h=Math.sin(dp/2)**2+Math.cos(p)*Math.cos(q)*Math.sin(dl/2)**2;return 2*R*Math.asin(Math.min(1,Math.sqrt(h)))}
+function bearings(a,b){const rad=Math.PI/180,p=a[1]*rad,q=b[1]*rad,dl=(b[0]-a[0])*rad;return (Math.atan2(Math.sin(dl)*Math.cos(q),Math.cos(p)*Math.sin(q)-Math.sin(p)*Math.cos(q)*Math.cos(dl))*180/Math.PI+360)%360}
+function angle(a,b){return (b-a+540)%360-180}
+function project(p,a,b){const scale=Math.cos(p[1]*Math.PI/180),dx=(b[0]-a[0])*scale,dy=b[1]-a[1],t=Math.max(0,Math.min(1,((p[0]-a[0])*scale*dx+(p[1]-a[1])*dy)/(dx*dx+dy*dy||1)));const xy=[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];return {xy,t,d:hav(p,xy)}}
+function makeGraph(paths){const pts=[],adj=[],grid=new Map(),edges=[];const key=(x,y)=>`${Math.round(x*1e5)}:${Math.round(y*1e5)}`;
+function node(p){const k=key(...p);for(const id of grid.get(k)||[]){if(hav(pts[id],p)<1)return id}const id=pts.length;pts.push(p);adj.push([]);grid.set(k,[...(grid.get(k)||[]),id]);return id}
+function add(a,b,len){if(a===b||len<.2)return;adj[a].push([b,len]);adj[b].push([a,len])}
+for(const path of paths){let prev=null;for(const p of path){const id=node(p);if(prev!==null&&prev!==id){const len=hav(pts[prev],pts[id]);add(prev,id,len);edges.push({a:prev,b:id,len})}prev=id}}
+return {pts,adj,edges}}
+function nearest(p,g){let best=null;for(const e of g.edges){const q=project(p,g.pts[e.a],g.pts[e.b]);if(!best||q.d<best.d)best={...q,edge:e}}return best}
+function findPath(i){if(state.legs.has(i))return state.legs.get(i);const a=state.stops[i],b=state.stops[i+1],g=state.graph;if(!a||!b||!g)return null;
+const qa=nearest([a.lon,a.lat],g),qb=nearest([b.lon,b.lat],g);if(!qa||!qb||qa.d>18||qb.d>18){state.legs.set(i,null);return null}
+const N=g.pts.length,src=N,dst=N+1,neighbors=x=>{if(x===src)return [[qa.edge.a,qa.t*qa.edge.len],[qa.edge.b,(1-qa.t)*qa.edge.len],...(qa.edge===qb.edge?[[dst,Math.abs(qa.t-qb.t)*qa.edge.len]]:[])];if(x===dst)return [];const out=g.adj[x].slice();for(const [snap,id] of [[qa,src],[qb,dst]]){if(snap.edge.a===x)out.push([id,snap.t*snap.edge.len]);if(snap.edge.b===x)out.push([id,(1-snap.t)*snap.edge.len])}return out};
+// Binary-heap Dijkstra to keep larger published route datasets responsive.
+const dist=new Float64Array(N+2).fill(Infinity),prev=new Int32Array(N+2).fill(-1),heap=[];function push(v,d){let k=heap.length;heap.push([d,v]);while(k){const p=(k-1)>>1;if(heap[p][0]<=d)break;heap[k]=heap[p];k=p}heap[k]=[d,v]}function pop(){const top=heap[0],last=heap.pop();if(heap.length){let k=0;while(2*k+1<heap.length){let c=2*k+1;if(c+1<heap.length&&heap[c+1][0]<heap[c][0])c++;if(last[0]<=heap[c][0])break;heap[k]=heap[c];k=c}heap[k]=last}return top}
+dist[src]=0;push(src,0);while(heap.length){const [d,v]=pop();if(d>dist[v]+1e-7)continue;if(v===dst)break;for(const [w,len] of neighbors(v)){const nd=d+len;if(nd+1e-7<dist[w]){dist[w]=nd;prev[w]=v;push(w,nd)}}}
+if(!Number.isFinite(dist[dst])){state.legs.set(i,null);return null}const ids=[];let v=dst,limit=N+3;while(v!==-1&&limit--){ids.push(v);if(v===src)break;v=prev[v]}if(ids.at(-1)!==src){state.legs.set(i,null);return null}ids.reverse();const coords=ids.map(id=>id===src?qa.xy:id===dst?qb.xy:g.pts[id]);const result={coords,distance:dist[dst],snapDistance:Math.max(qa.d,qb.d)};state.legs.set(i,result);return result}
+function generateDirections(i){const b=state.stops[i+1],leg=findPath(i);if(!b)return ['You have reached the final stop of the heritage tour.'];if(!leg)return ['Next stop: '+b.name+'. Detailed left and right directions are unavailable for this section of the stored route.'];
+const p=leg.coords,steps=['Head along the highlighted heritage route toward '+b.name+'.'];if(p.length<3){steps.push('Continue for approximately '+meters(leg.distance)+'.');steps.push('Arrive at '+b.name+'.');return steps}
+let accumulated=0,lastTurnAt=0;for(let j=1;j<p.length-1;j++){accumulated+=hav(p[j-1],p[j]);let k=j+1;while(k<p.length&&hav(p[j],p[k])<4)k++;if(k>=p.length)break;let h=j-1;while(h>=0&&hav(p[h],p[j])<4)h--;if(h<0)continue;const change=angle(bearings(p[h],p[j]),bearings(p[j],p[k]));if(Math.abs(change)<48||accumulated-lastTurnAt<12)continue;
+const direction=Math.abs(change)>145?(change>0?'Make a sharp right turn.':'Make a sharp left turn.'):(change>0?'Turn right.':'Turn left.');const approach=accumulated-lastTurnAt;steps.push('Continue for about '+meters(approach)+', then '+direction.toLowerCase());lastTurnAt=accumulated}
+const remain=Math.max(0,leg.distance-lastTurnAt);if(remain>8)steps.push('Continue approximately '+meters(remain)+'.');steps.push('Arrive at '+b.name+'.');return steps}
+function textAt(i){const a=state.stops[i],b=state.stops[i+1],leg=findPath(i);if(!b)return 'Stop '+(i+1)+': '+a.name+'. You have reached the final stop.';
+const d=leg?leg.distance:legDistance(i).value;return 'Stop '+(i+1)+': '+a.name+'. Next, '+b.name+'. '+(d!=null?'Distance: approximately '+meters(d)+'. ':'')+generateDirections(i).join(' ')}
+function paint(){const s=state.stops,i=state.idx,a=s[i],b=s[i+1],d=legDistance(i);el('current').innerHTML='';const head=document.createElement('div');head.className='big';head.textContent=(i+1)+'. '+a.name;el('current').append(head);const tail=document.createElement('p');tail.textContent=b?'Next: '+b.name:'End of recorded heritage sequence';el('current').append(tail);const leg=b?findPath(i):null;el('distanceNote').textContent=b?(leg?'Distance along published geometry: '+meters(leg.distance)+'.':d.value!=null?'Recorded network leg distance: '+meters(d.value)+'; detailed turns unavailable.':'Distance not available for this leg.'):'Tour complete.';el('turnSteps').replaceChildren();for(const direction of generateDirections(i)){const li=document.createElement('li');li.textContent=direction;el('turnSteps').append(li)}if(state.map){if(state.highlight){state.map.removeLayer(state.highlight);state.highlight=null}if(leg){state.highlight=L.polyline(leg.coords.map(c=>[c[1],c[0]]),{color:'#db7734',weight:7,opacity:.95}).addTo(state.map)}}for(const [k,button] of [...el('stops').children].entries())button.classList.toggle('active',k===i);el('previous').disabled=i===0;el('next').disabled=i===s.length-1;if(state.map){state.markers.forEach((m,k)=>m.setOpacity(k===i?1:.65));if(state.markers[i])state.map.panTo(state.markers[i].getLatLng())}}
+function select(i,announce=true){state.idx=i;paint();if(announce)say(textAt(i))}
+function initMap(){if(!window.L){debug('Leaflet failed to load; list and speech remain available.');return}const m=L.map('map',{scrollWheelZoom:false}).setView([4.597,101.078],15);state.map=m;L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'© OpenStreetMap contributors'}).addTo(m);const lines=state.paths.map(p=>p.map(x=>[x[1],x[0]]));const route=L.polyline(lines,{color:'#237b80',weight:5,opacity:.85}).addTo(m);const group=L.featureGroup([route]);for(const [i,s] of state.stops.entries()){const pin=L.marker([s.lat,s.lon]).addTo(m);pin.bindPopup((i+1)+'. '+s.name);pin.on('click',()=>select(i,true));state.markers.push(pin);group.addLayer(pin)}if(group.getBounds().isValid())m.fitBounds(group.getBounds().pad(.12));setTimeout(()=>m.invalidateSize(),150)}
+async function init(){try{
+ const service=await request(BASE);const layers=service.layers||[];
+ const stopsLayer=layers.find(l=>/^(stops|stops[_\s-]*export)/i.test(l.name)) || layers.find(l=>/stops/i.test(l.name));
+ const routeLayer=layers.find(l=>l.id===2);
+ if(!stopsLayer)throw Error('Industrial Stops layer not found in service metadata');
+ if(!routeLayer || !/route/i.test(routeLayer.name))throw Error('Layer 2 is not an Industrial Routes layer');
+ debug('Industrial route layer: '+routeLayer.name+' (2)');
+ debug('Industrial stops layer: '+stopsLayer.name+' ('+stopsLayer.id+')');
+ const [rows,routes]=await Promise.all([features(stopsLayer.id),features(2)]);state.stops=rows.map((f,k)=>{const a=f.attributes||{},g=f.geometry||{};return{name:String(getField(a,'Name','StopName','Attraction')??'Stop '+(k+1)).replace(/^\d+\s*[:\-]\s*/,''),seq:valid(getField(a,'Sequence')),attr:valid(getField(a,'Attr_Length')),cumul:valid(getField(a,'Cumul_Length')),lat:valid(g.y),lon:valid(g.x),oid:valid(getField(a,'OBJECTID'))}}).filter(x=>x.lat!==null&&x.lon!==null);const sequences=state.stops.map(x=>x.seq);if(sequences.some(x=>x===null)||new Set(sequences).size!==sequences.length)throw Error('Stop Sequence is missing or duplicated; optimized visiting order cannot be verified.');state.stops.sort((a,b)=>a.seq-b.seq);for(const f of routes){const length=valid(getField(f.attributes,'Total_Length'));if(length!=null)state.total=(state.total??0)+length;for(const p of f.geometry?.paths||[]){const clean=p.filter(c=>c.length>=2&&Number.isFinite(+c[0])&&Number.isFinite(+c[1])).map(c=>[+c[0],+c[1]]);if(clean.length>1)state.paths.push(clean)}}if(!state.stops.length)throw Error('No valid heritage stops available.');if(!state.paths.length)throw Error('No route geometry was returned.');state.graph=makeGraph(state.paths);debug('Route graph: '+state.graph.pts.length+' vertices and '+state.graph.edges.length+' segments.');debug('Valid ordered stops: '+state.stops.length);debug('Multipart geometry parts: '+state.paths.length);debug('Total_Length: '+state.total);debug('Sequences: '+state.stops.map(x=>x.seq).join(', '));el('stops').replaceChildren();for(const [i,s] of state.stops.entries()){const b=document.createElement('button');b.className='stop';b.type='button';const label=document.createElement('strong');label.textContent=(i+1)+'. '+s.name;const detail=document.createElement('small');detail.textContent='GA-TSP sequence '+s.seq;b.append(label,detail);b.onclick=()=>select(i,true);el('stops').append(b)}el('summary').textContent='('+state.stops.length+' attractions)';el('start').disabled=false;el('repeat').disabled=false;paint();initMap();status('Published route and ordered stops loaded. Press Enable voice, then Start tour.')}catch(e){status('Could not load the published route: '+e.message,true);debug('ERROR: '+(e.stack||e.message))}}
+el('enable').onclick=()=>{state.voice=!state.voice;el('enable').textContent=state.voice?'🔊 Voice enabled':'🔇 Enable voice';if(state.voice)say('Voice guidance enabled. Press Start tour to hear the optimized heritage route sequence.');else if('speechSynthesis' in window)window.speechSynthesis.cancel()};
+el('start').onclick=()=>select(0,true);el('previous').onclick=()=>select(Math.max(0,state.idx-1),true);el('next').onclick=()=>select(Math.min(state.stops.length-1,state.idx+1),true);el('repeat').onclick=()=>say(textAt(state.idx));el('stopSpeech').onclick=()=>{if('speechSynthesis' in window)window.speechSynthesis.cancel()};init();
+})();
+</script></body></html>
