@@ -1,66 +1,97 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Ipoh Heritage Accessible Voice Map</title>
-<link rel="stylesheet" href="https://js.arcgis.com/4.32/esri/themes/light/main.css">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Ipoh Heritage Voice Guidance</title>
 <style>
-:root{font-family:Arial,system-ui,sans-serif;color:#392f40;background:#faf4fa}*{box-sizing:border-box}html,body{margin:0;width:100%;height:100%}button,select{font:inherit}button{cursor:pointer}button:focus-visible,select:focus-visible{outline:3px solid #195bb2;outline-offset:2px}.app{height:100vh;min-height:420px;display:grid;grid-template-columns:minmax(300px,1fr) 340px;overflow:hidden}.mapwrap{position:relative;min-height:250px}#map{width:100%;height:100%}.side{background:#fcf8fd;padding:10px;overflow:auto;border-left:1px solid #dccedf}.side h1{font-size:17px;margin:0 0 4px}.hint{font-size:12px;line-height:1.45;color:#655b6b;margin:4px 0 10px}.controls{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px}button,select{background:white;border:1px solid #c9b8cc;border-radius:8px;color:#44384d;padding:8px}.primary{background:#73458d;color:white;border-color:#73458d}.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}.tile{min-height:60px;text-align:left;padding:8px;display:flex;flex-direction:column;justify-content:space-between;gap:3px}.tile small{font-size:12px}.tile strong{font-size:21px}.tile span{font-size:12px;color:#62566b}.section{border:1px solid #e5d7e7;border-radius:11px;padding:10px;margin-top:9px;background:#fff}.section h2{font-size:14px;margin:0 0 7px}.attractions{display:grid;gap:5px;max-height:170px;overflow-y:auto}.attractions button{text-align:left;font-size:12px;padding:7px}.status{font-size:12px;color:#5b5062;line-height:1.45;min-height:20px}#alert{display:none;background:#ffefdd;padding:9px;font-size:12px;border:1px solid #c58c41;border-radius:8px;margin-bottom:8px}#mapMessage{position:absolute;bottom:15px;left:15px;z-index:2;background:white;max-width:340px;padding:10px;border-radius:8px;display:none;box-shadow:0 2px 12px #0002}.info{font-size:11px;color:#6b6073;line-height:1.5;margin-top:8px}.panelOnly .app{display:block;min-height:0;height:auto;overflow:visible}.panelOnly .mapwrap{display:none}.panelOnly .side{padding:8px;border:0;overflow:visible}.panelOnly .tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.panelOnly #panelWarning{display:block}.panelOnly .section{margin-top:6px;padding:8px}.panelOnly .attractions{max-height:110px}#panelWarning{display:none} @media(max-width:780px){.app{display:flex;flex-direction:column;overflow:auto;height:100vh;min-height:0}.mapwrap{height:48vh;min-height:230px;flex-shrink:0}.side{overflow:visible;border-left:0}.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}}
+:root{font-family:Arial,Helvetica,sans-serif;color:#372e3c;background:#faf5fb;font-size:14px}
+*{box-sizing:border-box}html,body{margin:0;padding:0;width:100%;height:auto;min-height:0;overflow-x:hidden}
+body{padding:6px}main{margin:0;padding:0;width:100%;height:auto}
+h1{font-size:16px;line-height:1.25;margin:0 0 5px;font-weight:700}
+.subtitle{font-size:11px;line-height:1.4;color:#665b6e;margin:0 0 8px}
+.controls{display:flex;flex-wrap:wrap;gap:5px;margin:0 0 6px}
+button,select,input{font:inherit;min-width:0}button{cursor:pointer;border:1px solid #d8c4dc;background:#fff;color:#3f3448;border-radius:7px;padding:7px 8px;line-height:1.3}
+button:hover{background:#f4ecf7}button:focus-visible,select:focus-visible,input:focus-visible{outline:3px solid #205aaf;outline-offset:2px}
+button.primary{background:#724b86;border-color:#724b86;color:white}button.primary:hover{background:#5c3a70}
+select,input{padding:7px 5px;border:1px solid #d8c4dc;border-radius:7px;background:#fff;max-width:100%}
+.field{display:flex;align-items:center;gap:4px;font-size:11px}
+.note{background:#f5ecf6;border:1px solid #e4d3e8;padding:7px;border-radius:7px;font-size:11px;line-height:1.4;margin:0 0 8px}
+.section{margin:7px 0 0;padding:7px;border:1px solid #e7d8e8;border-radius:8px;background:#fff}
+h2{font-size:13px;margin:0 0 6px}
+.status{font-size:11px;color:#65596b;line-height:1.45;margin:0 0 5px;min-height:1em}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.tile{display:flex;flex-direction:column;align-items:flex-start;text-align:left;justify-content:space-between;min-height:64px;padding:7px 8px;gap:2px}
+.tile-name{font-size:11px;overflow-wrap:anywhere}.tile-count{font-size:21px;font-weight:700;line-height:1.1}.tile-hint{font-size:10px;color:#63596a}
+.attractions{display:grid;gap:5px;max-height:160px;overflow:auto}
+.attractions button{text-align:left;font-size:12px;padding:7px}
+label{cursor:pointer}#answer{font-size:12px;line-height:1.45;margin:5px 0 0;white-space:pre-line}
+.warning{font-size:11px;color:#805317;margin:6px 0 0}
+@media(min-width:700px){body{padding:10px}.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
 </style>
 </head>
 <body>
-<div class="app">
-<section class="mapwrap" aria-label="Interactive Ipoh heritage map"><div id="map"></div><div id="mapMessage" role="alert"></div></section>
-<aside class="side">
+<main>
 <h1>🔊 Ipoh Heritage Voice Guidance</h1>
-<p class="hint">Facility counts and speech use the extent of the map <b>inside this webpage</b>.</p>
-<div id="panelWarning" class="section"><b>Compact panel mode:</b> The separate ArcGIS Dashboard map cannot share its live extent with this iframe. Counts below are for the <b>entire dataset</b>, not the current Dashboard map view. To synchronize extent and voice, open the full voice map and use it in place of the Dashboard map. <a href="?mode=map" target="_blank" rel="noopener">Open synchronized map</a>.</div>
-<div id="alert" role="alert"></div>
-<div class="controls"><button id="enable" class="primary" aria-pressed="false">Enable automatic voice</button><button id="summary">Read summary</button><button id="stop">Stop</button></div>
-<div class="controls"><label>Language <select id="lang"><option value="en-US">English</option><option value="ms-MY">Bahasa Melayu</option></select></label><label>Speed <select id="rate"><option value="0.85">Slow</option><option value="1" selected>Normal</option><option value="1.15">Fast</option></select></label><button id="reload">Refresh</button></div>
-<div class="section"><h2 id="countHeading">Facilities in current map extent</h2><div id="status" class="status" aria-live="polite">Loading ArcGIS layers…</div><div class="tiles" id="tiles"></div></div>
-<div class="section"><h2>Heritage attractions</h2><div id="attractions" class="attractions"><span class="status">Loading…</span></div></div>
-<p class="info">Counts use spatial feature intersection, not a sum of fields. Original Dashboard indicators may use other filters or statistical calculations. When a query fails, the value is marked unavailable rather than estimated. Speech is controlled by the visitor. This is a GIS voice reader, not a generative AI service.</p>
-</aside>
+<p class="subtitle">Select a facility or attraction to hear its information.</p>
+<div class="note" role="note"><strong>Data scope:</strong> The counts below represent the entire published facility layers, not the filtered extent of the separate ArcGIS Dashboard map.</div>
+<div class="controls">
+<button class="primary" id="summary" type="button">🔊 Read summary</button>
+<button id="stop" type="button">■ Stop</button>
+<button id="refresh" type="button">↻ Refresh</button>
 </div>
-<script src="https://js.arcgis.com/4.32/"></script>
+<div class="controls">
+<label class="field">Language <select id="lang"><option value="en-US">English</option><option value="ms-MY">Bahasa Melayu</option></select></label>
+<label class="field">Speed <select id="speed"><option value="0.85">Slow</option><option value="1" selected>Normal</option><option value="1.15">Fast</option></select></label>
+</div>
+<section class="section" aria-labelledby="facilityTitle">
+<h2 id="facilityTitle">Accessibility facilities</h2>
+<p class="status" id="status" role="status">Loading live ArcGIS counts…</p>
+<div id="tiles" class="tiles"></div>
+</section>
+<section class="section" aria-labelledby="attractionTitle">
+<h2 id="attractionTitle">Heritage attractions</h2>
+<div id="attractions" class="attractions"><p class="status">Loading attractions…</p></div>
+</section>
+<section class="section" aria-labelledby="questionTitle">
+<h2 id="questionTitle">Ask about facilities</h2>
+<div class="controls"><input id="question" type="text" placeholder="e.g. How many Braille?" aria-label="Your question" style="flex:1 1 130px;width:100%"/><button id="ask" type="button">Ask &amp; speak</button></div>
+<p id="answer" aria-live="polite"></p>
+</section>
+<p class="warning" id="error" role="alert" hidden></p>
+</main>
 <script>
-(()=>{
-'use strict';
+(()=>{'use strict';
 const BASE='https://services5.arcgis.com/2ZRAaoTSJbQ20ceg/arcgis/rest/services/GATSP_Optimized_Heritage_Tourism_Route_Public/FeatureServer';
-const WEBMAP='790ef9030fec42fc9c03afb532adb72b';
-const defs=[['Children Restroom',11],['Canteen/Tuckshop',12],['Mobility Rental',8],['Lift/Ramp',9],['Stairs',5],['Restroom',7],['Drinking Fountain',10],['Seats',6],['Handrails',13],['Braille',14]];
+const facilities=[
+{id:'child',name:'Children Restroom',ms:'Tandas kanak-kanak',layer:11},
+{id:'canteen',name:'Canteen/Tuckshop',ms:'Kantin atau kedai makan',layer:12},
+{id:'mobility',name:'Mobility Rental',ms:'Sewaan alat mobiliti',layer:8},
+{id:'lift',name:'Lift/Ramp',ms:'Lif atau tanjakan',layer:9},
+{id:'stairs',name:'Stairs',ms:'Tangga',layer:5},
+{id:'restroom',name:'Restroom',ms:'Tandas',layer:7},
+{id:'fountain',name:'Drinking Fountain',ms:'Pancuran air minum',layer:10},
+{id:'seats',name:'Seats',ms:'Tempat duduk',layer:6},
+{id:'handrails',name:'Handrails',ms:'Susur tangan',layer:13},
+{id:'braille',name:'Braille',ms:'Kemudahan Braille',layer:14}
+];
 const $=id=>document.getElementById(id);
-const panel=new URLSearchParams(location.search).get('mode')==='panel';
-if(panel){document.body.classList.add('panelOnly');$('countHeading').textContent='Facility totals (entire dataset)';}
-let view=null,facilityLayers=[],attractionLayer=null,nameField='',attractionFeatures=[],voiceOn=false,sequence=0,debounce=null,firstRun=true;
-let latest=Object.fromEntries(defs.map(([name])=>[name,null]));
-const sayText=(en,ms)=>$('lang').value==='ms-MY'?ms:en;
-function speak(text){if(!('speechSynthesis' in window)){$('status').textContent='Speech unavailable in this browser.';return;}speechSynthesis.cancel();const utter=new SpeechSynthesisUtterance(text);utter.lang=$('lang').value;utter.rate=Number($('rate').value);speechSynthesis.speak(utter);}
-function indicatorSpeech(name){const n=latest[name];return Number.isFinite(n)?sayText(`${name}: ${n} recorded facilities ${panel?'across the dataset':'within the current map view'}.`,`${name}: ${n} kemudahan direkodkan ${panel?'dalam keseluruhan data':'dalam paparan peta semasa'}.`):sayText(`${name} count is unavailable.`,`Bilangan ${name} tidak tersedia.`);}
-function summary(){const valid=defs.filter(([name])=>Number.isFinite(latest[name]));if(!valid.length)return sayText('Facility values are unavailable.','Nilai kemudahan tidak tersedia.');const joined=valid.map(([name])=>`${name}: ${latest[name]}`).join('; ');return sayText(`${panel?'Entire dataset':'Current map area'}: ${joined}.`,`${panel?'Keseluruhan data':'Kawasan peta semasa'}: ${joined}.`);}
-function drawTiles(){const host=$('tiles');host.replaceChildren();for(const [name] of defs){const btn=document.createElement('button');btn.type='button';btn.className='tile';const value=latest[name];const small=document.createElement('small');small.textContent=name;const count=document.createElement('strong');count.textContent=Number.isFinite(value)?String(value):'—';const prompt=document.createElement('span');prompt.textContent='🔊 Click to hear';btn.append(small,count,prompt);btn.setAttribute('aria-label',`${name}: ${count.textContent}, read aloud`);btn.addEventListener('click',()=>speak(indicatorSpeech(name)));host.append(btn);}}
-function warning(msg){$('alert').style.display='block';$('alert').textContent=msg;}
-function resolveField(layer){return layer.fields.find(f=>/^(name|attraction_name|poi_name|place_name|heritage_name)$/i.test(f.name))?.name||layer.fields.find(f=>f.type==='string'&&/name|place|attraction/i.test(f.name))?.name||layer.fields.find(f=>f.type==='string')?.name||layer.objectIdField;}
-function speakAttraction(feat){const a=feat.attributes||{};const name=String(a[nameField]||'Heritage attraction');const extras=Object.entries(a).filter(([key,value])=>value!=null&&value!==''&&key!==nameField&&!/(objectid|globalid|shape|created|edited|date|fid|id$)/i.test(key)&&['string','number'].includes(typeof value)).slice(0,2).map(([key,value])=>`${key.replace(/_/g,' ')}: ${value}`).join('. ');speak(sayText(`Selected heritage attraction: ${name}. ${extras}`,`Tarikan warisan dipilih: ${name}. ${extras}`));}
-function drawAttractions(){const host=$('attractions');host.replaceChildren();if(!attractionFeatures.length){host.textContent='No attractions available in this area.';return;}for(const feature of attractionFeatures){const btn=document.createElement('button');btn.textContent=String(feature.attributes[nameField]||'Heritage attraction');btn.addEventListener('click',()=>{speakAttraction(feature);if(view&&feature.geometry)view.goTo({target:feature.geometry,zoom:17}).catch(()=>{});});host.append(btn);}}
-async function update(){if(!panel&&(!view||!view.extent))return;const mySeq=++sequence;const extent=panel?null:view.extent.clone();$('status').textContent='Updating values…';const result=await Promise.allSettled(facilityLayers.map(async ([name,layer])=>{await layer.load();const q=layer.createQuery();q.where='1=1';if(extent){q.geometry=extent;q.spatialRelationship='intersects';}return {name,count:await layer.queryFeatureCount(q)};}));if(mySeq!==sequence)return;let errors=0;result.forEach((r,i)=>{const name=facilityLayers[i][0];if(r.status==='fulfilled')latest[name]=r.value.count;else{latest[name]=null;errors++;console.warn(name,r.reason);}});drawTiles();$('status').textContent=errors?`${10-errors} of 10 facility layers queried. ${errors} unavailable. If all are unavailable, check sharing permissions and network.`:`Updated ${panel?'entire-dataset totals':'counts for the current map extent'}.`;if(!firstRun&&voiceOn)speak(summary());firstRun=false;await loadAttractions(extent,mySeq);}
-async function loadAttractions(extent,mySeq){if(!attractionLayer)return;try{await attractionLayer.load();const q=attractionLayer.createQuery();q.where='1=1';q.outFields=['*'];q.returnGeometry=!panel;if(extent){q.geometry=extent;q.spatialRelationship='intersects';}const data=await attractionLayer.queryFeatures(q);if(mySeq!==sequence)return;attractionFeatures=data.features;drawAttractions();}catch(err){console.warn('Attractions',err);$('attractions').textContent='Attraction data unavailable.';}}
-function schedule(){clearTimeout(debounce);debounce=setTimeout(update,600);}
-$('enable').addEventListener('click',()=>{voiceOn=!voiceOn;$('enable').setAttribute('aria-pressed',String(voiceOn));$('enable').textContent=voiceOn?'Automatic voice ON':'Enable automatic voice';if(voiceOn)speak(sayText('Automatic voice enabled.','Panduan suara automatik diaktifkan.'));else if('speechSynthesis'in window)speechSynthesis.cancel();});
-$('stop').addEventListener('click',()=>{if('speechSynthesis'in window)speechSynthesis.cancel();});$('summary').addEventListener('click',()=>speak(summary()));$('reload').addEventListener('click',update);
-drawTiles();
-require(['esri/WebMap','esri/views/MapView','esri/layers/FeatureLayer','esri/core/reactiveUtils'],async(WebMap,MapView,FeatureLayer,reactiveUtils)=>{
- try{
- const map=panel?null:new WebMap({portalItem:{id:WEBMAP}});
- if(!panel){view=new MapView({container:'map',map,ui:{components:['zoom','attribution']}});await view.when();}
- for(const [name,id] of defs){const url=`${BASE}/${id}`;const linked=map?.allLayers.find(layer=>String(layer.url||'').replace(/\/$/,'').toLowerCase()===url.toLowerCase());facilityLayers.push([name,linked||new FeatureLayer({url})]);}
- const attUrl=`${BASE}/0`;attractionLayer=map?.allLayers.find(layer=>String(layer.url||'').replace(/\/$/,'').toLowerCase()===attUrl.toLowerCase())||new FeatureLayer({url:attUrl});
- await attractionLayer.load();nameField=resolveField(attractionLayer);
- if(!panel){if(!map.allLayers.includes(attractionLayer))map.add(attractionLayer);view.on('click',async event=>{try{const hits=await view.hitTest(event,{include:[attractionLayer]});const hit=hits.results.find(r=>r.graphic?.layer===attractionLayer);if(hit)speakAttraction(hit.graphic);}catch(err){console.warn(err);}});reactiveUtils.watch(()=>view.stationary,stationary=>{if(stationary)schedule();});}
- schedule();
- }catch(err){console.error(err);warning(`Could not initialize ${panel?'GIS layers':'Web Map'}: ${err.message||err}. Check sharing permissions and Web Map ID.`);$('status').textContent='Unable to load data.';}
-});
+const totals=new Map(facilities.map(f=>[f.id,null]));
+let attractions=[];let version=0;
+const malay=()=> $('lang').value==='ms-MY';
+function t(en,ms){return malay()?ms:en;}
+function speak(message){$('answer').textContent=message;if(!('speechSynthesis' in window)){$('error').hidden=false;$('error').textContent='Text-to-speech is unavailable in this browser.';return;}window.speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(message);u.lang=$('lang').value;u.rate=Number($('speed').value);window.speechSynthesis.speak(u);}
+function messageForFacility(f){const n=totals.get(f.id);return Number.isFinite(n)?t(`${f.name}: ${n} recorded features across the entire published layer.`,`${f.ms}: ${n} rekod dalam keseluruhan lapisan data yang diterbitkan.`):t(`The ${f.name} value is currently unavailable.`,`Nilai ${f.ms} tidak tersedia buat masa ini.`);}
+function summaryText(){const known=facilities.filter(f=>Number.isFinite(totals.get(f.id)));if(!known.length)return t('No facility values are available right now.','Tiada nilai kemudahan yang tersedia buat masa ini.');return t('Across the published facility layers: ','Bagi keseluruhan lapisan data kemudahan: ')+known.map(f=>`${malay()?f.ms:f.name}: ${totals.get(f.id)}`).join('; ')+'.';}
+function makeTile(f){const b=document.createElement('button');b.type='button';b.className='tile';const label=document.createElement('span');label.className='tile-name';label.textContent=f.name;const count=document.createElement('strong');count.className='tile-count';const n=totals.get(f.id);count.textContent=Number.isFinite(n)?String(n):'—';const hint=document.createElement('span');hint.className='tile-hint';hint.textContent='🔊 Read value';b.append(label,count,hint);b.setAttribute('aria-label',`${f.name}, ${count.textContent}, read aloud`);b.addEventListener('click',()=>speak(messageForFacility(f)));return b;}
+function renderFacilities(){$('tiles').replaceChildren(...facilities.map(makeTile));}
+async function query(url,params){const u=new URL(url);for(const [k,v] of Object.entries({...params,f:'json'}))u.searchParams.set(k,String(v));const res=await fetch(u.toString(),{cache:'no-store'});if(!res.ok)throw Error(`HTTP ${res.status}`);const json=await res.json();if(json.error)throw Error(json.error.message||'ArcGIS query error');return json;}
+async function refresh(){const token=++version;$('status').textContent='Loading current published totals…';$('error').hidden=true;const results=await Promise.allSettled(facilities.map(f=>query(`${BASE}/${f.layer}/query`,{where:'1=1',returnCountOnly:true})));if(token!==version)return;let fail=0;results.forEach((r,i)=>{const f=facilities[i];const v=r.status==='fulfilled'?Number(r.value.count):NaN;totals.set(f.id,Number.isFinite(v)?v:null);if(!Number.isFinite(v)){fail++;console.warn('Facility unavailable:',f.name,r.status==='rejected'?r.reason:'invalid count');}});renderFacilities();$('status').textContent=fail?`${facilities.length-fail} of 10 layers loaded; ${fail} unavailable.`:'Live whole-dataset values loaded.';if(fail){$('error').hidden=false;$('error').textContent='Some counts could not be loaded. Check that the layers are publicly accessible.';} }
+function nameField(fields){const candidates=['Name','NAME','name','Attraction_Name','AttractionName','Place_Name','POI_Name'];return candidates.find(x=>fields.some(f=>f.name===x))||fields.find(f=>f.type==='esriFieldTypeString'&&/name|attraction|place/i.test(f.name))?.name||fields.find(f=>f.type==='esriFieldTypeString')?.name||'';}
+async function loadAttractions(){const root=$('attractions');try{const info=await query(`${BASE}/0`,{});const field=nameField(info.fields||[]);if(!field)throw Error('No text field identified');const data=await query(`${BASE}/0/query`,{where:'1=1',outFields:'*',returnGeometry:false,resultRecordCount:100});attractions=(data.features||[]).map(x=>({name:String(x.attributes?.[field]??'Heritage attraction'),attributes:x.attributes||{}})).sort((a,b)=>a.name.localeCompare(b.name));root.replaceChildren();if(!attractions.length){root.textContent='No attraction records found.';return;}attractions.forEach(a=>{const b=document.createElement('button');b.type='button';b.textContent='🔊 '+a.name;b.addEventListener('click',()=>speak(t(`Heritage attraction: ${a.name}.`,`Tarikan warisan: ${a.name}.`)));root.appendChild(b);});}catch(err){console.warn('Attractions unavailable:',err);root.textContent='Heritage attractions could not be loaded.';}}
+function answer(){const q=$('question').value.trim().toLowerCase();if(!q)return;const f=facilities.find(x=>q.includes(x.name.toLowerCase())||q.includes(x.ms.toLowerCase())||q.includes(x.id));if(f){speak(messageForFacility(f));return;}const a=attractions.find(x=>q.includes(x.name.toLowerCase()));if(a){speak(t(`The published attraction is ${a.name}.`,`Tarikan warisan yang direkodkan ialah ${a.name}.`));return;}if(/all|summary|total|overall|semua|keseluruhan/.test(q)){speak(summaryText());return;}speak(t('I can read the published facility totals and heritage attraction names. Try asking how many Braille facilities are recorded.','Saya boleh membaca jumlah rekod kemudahan dan nama tarikan warisan. Cuba tanya jumlah kemudahan Braille.'));}
+$('summary').addEventListener('click',()=>speak(summaryText()));$('stop').addEventListener('click',()=>{if('speechSynthesis' in window)window.speechSynthesis.cancel();});$('refresh').addEventListener('click',()=>{refresh();loadAttractions();});$('ask').addEventListener('click',answer);$('question').addEventListener('keydown',e=>{if(e.key==='Enter')answer();});
+renderFacilities();refresh();loadAttractions();
 })();
 </script>
 </body>
